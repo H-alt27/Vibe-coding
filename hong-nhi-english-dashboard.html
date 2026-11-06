@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f7fa">
+  <title>Hong Nhi — English Learning Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f2f7fa;
+      --surface: #fcfeff;
+      --ink: #1e3038;
+      --muted: #70828b;
+      --line: #dce7ec;
+      --green: #2b668b;
+      --green-soft: #e4f0f6;
+      --lime: #45bdb0;
+      --peach: #e2f4f1;
+      --blue-soft: #e7eff8;
+      --shadow: 0 8px 24px rgba(25, 57, 72, .055);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Trebuchet MS", "Segoe UI", sans-serif; font-size: 14px; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 236px minmax(0, 1fr); }
+    .sidebar { padding: 28px 18px 22px; border-right: 1px solid var(--line); background: #f8fbfc; display: flex; flex-direction: column; gap: 30px; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 8px; }
+    .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: var(--green); color: #fff; font-family: Georgia, serif; font-size: 19px; font-weight: 700; }
+    .brand-name { font: 700 15px Georgia, serif; letter-spacing: -.2px; }
+    .brand-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .nav-group { display: grid; gap: 5px; }
+    .nav-label { margin: 0 10px 8px; color: #91a3ab; font-size: 10px; font-weight: 700; letter-spacing: 1.15px; text-transform: uppercase; }
+    .nav-link { width: 100%; display: flex; align-items: center; gap: 11px; border: 0; border-radius: 10px; padding: 10px 11px; color: #647780; background: transparent; text-align: left; transition: background .16s ease, color .16s ease; }
+    .nav-link:hover, .nav-link.active { background: var(--green-soft); color: var(--green); }
+    .nav-icon { width: 18px; text-align: center; font-size: 15px; }
+    .sidebar-bottom { margin-top: auto; border-top: 1px solid var(--line); padding: 16px 10px 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+    main { width: min(1280px, 100%); margin: 0 auto; padding: 34px clamp(20px, 4vw, 54px) 40px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 30px; }
+    .eyebrow { color: var(--green); text-transform: uppercase; letter-spacing: 1.5px; font-size: 10px; font-weight: 700; }
+    h1 { margin: 6px 0 0; font: 500 clamp(25px, 3vw, 34px)/1.15 Georgia, serif; letter-spacing: -.7px; }
+    .top-right { display: flex; align-items: center; gap: 12px; }
+    .date-pill { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 9px 13px; color: #5c727b; font-size: 12px; white-space: nowrap; }
+    .avatar { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: #1d5755; font: 700 13px Georgia, serif; }
+    .welcome { border-radius: var(--radius); background: #e5f2f5; padding: 19px 23px; margin-bottom: 23px; display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .welcome p { margin: 5px 0 0; color: #637d87; }
+    .welcome strong { font: 500 20px Georgia, serif; }
+    .streak { color: #446c78; background: rgba(255,255,255,.72); border-radius: 999px; padding: 9px 13px; font-size: 12px; white-space: nowrap; }
+    .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 0 12px; }
+    h2 { margin: 0; font: 500 19px Georgia, serif; letter-spacing: -.2px; }
+    .section-note { color: var(--muted); font-size: 11px; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 27px; }
+    .stat-card, .module-card, .quick-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .stat-card { padding: 15px 16px 14px; min-width: 0; }
+    .stat-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; color: #647780; font-size: 12px; }
+    .stat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .stat-dot.peach { background: #43b0bb; }
+    .stat-dot.blue { background: #5988ba; }
+    .stat-dot.lime { background: #36b7a7; }
+    .stat-value { margin-top: 13px; font: 500 26px Georgia, serif; letter-spacing: -.5px; }
+    .stat-value small { color: #899aa1; font: 12px "Trebuchet MS", "Segoe UI", sans-serif; letter-spacing: 0; }
+    .stat-desc { min-height: 30px; margin: 5px 0 13px; color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+    .progress-row { display: flex; align-items: center; gap: 8px; color: #6d838b; font-size: 10px; }
+    .track { height: 5px; flex: 1; background: #e8f0f3; border-radius: 10px; overflow: hidden; }
+    .fill { height: 100%; background: var(--green); border-radius: inherit; }
+    .fill.peach { background: #43b0bb; }
+    .fill.blue { background: #5988ba; }
+    .fill.lime { background: #36b7a7; }
+    .modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .module-card { padding: 18px 19px; }
+    .module-card.featured { grid-column: 1 / -1; background: #f7fbfd; }
+    .module-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .module-card h3 { margin: 0; font: 500 17px Georgia, serif; }
+    .module-card p { margin: 7px 0 14px; color: var(--muted); line-height: 1.55; font-size: 12px; max-width: 700px; }
+    .tag { color: var(--green); background: var(--green-soft); padding: 6px 9px; border-radius: 999px; font-size: 10px; white-space: nowrap; }
+    .module-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+    .module-list li { display: flex; align-items: center; gap: 9px; border-top: 1px solid var(--line); padding-top: 11px; color: #4b626b; font-size: 11px; line-height: 1.4; }
+    .step { flex: 0 0 21px; height: 21px; display: grid; place-items: center; border-radius: 50%; background: #e3f2f2; color: #247e82; font-size: 10px; font-weight: 700; }
+    .module-card:not(.featured) .module-list { grid-template-columns: 1fr; gap: 0; }
+    .module-card:not(.featured) .module-list li { padding: 9px 0; }
+    .quick-head { margin-bottom: 12px; }
+    .quick-entries { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .quick-card { padding: 15px 16px; display: flex; align-items: flex-start; gap: 12px; text-align: left; color: inherit; transition: transform .15s ease, border-color .15s ease; }
+    .quick-card:hover { transform: translateY(-2px); border-color: #b6d3df; }
+    .quick-symbol { flex: 0 0 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; color: var(--green); background: var(--green-soft); font-size: 15px; }
+    .quick-card:nth-child(2) .quick-symbol { color: #237f83; background: var(--peach); }
+    .quick-card:nth-child(3) .quick-symbol { color: #52739b; background: var(--blue-soft); }
+    .quick-card b { display: block; font-size: 12px; font-weight: 600; }
+    .quick-card span:last-child { display: block; margin-top: 4px; color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+    .input-bar { display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); }
+    .input-bar input { min-width: 0; flex: 1; border: 0; outline: 0; background: transparent; padding: 8px 10px; color: var(--ink); }
+    .input-bar input::placeholder { color: #92a2a8; }
+    .action-btn { border: 1px solid var(--line); border-radius: 9px; background: #fff; color: #566c75; padding: 9px 12px; font-size: 11px; white-space: nowrap; }
+    .action-btn:hover, .action-btn:focus-visible { border-color: var(--green); color: var(--green); outline: none; }
+    .action-btn.primary { background: var(--green); color: white; border-color: var(--green); }
+    .action-btn.primary:hover, .action-btn.primary:focus-visible { background: #1e526f; }
+    .toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; background: #1e526f; color: white; border-radius: 10px; padding: 11px 15px; box-shadow: 0 8px 24px #0002; transition: .2s ease; z-index: 5; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 1050px) { .app { grid-template-columns: 200px minmax(0, 1fr); } .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 720px) {
+      .app { display: block; }
+      .sidebar { padding: 12px 14px; border-right: 0; border-bottom: 1px solid var(--line); display: block; }
+      .brand { padding: 0 2px 10px; }
+      .nav-group { display: flex; overflow-x: auto; gap: 4px; padding: 3px 0; }
+      .nav-label, .sidebar-bottom { display: none; }
+      .nav-link { width: auto; flex: 0 0 auto; padding: 8px 10px; font-size: 11px; }
+      .nav-icon { display: none; }
+      main { padding: 24px 16px 30px; }
+      .topbar { margin-bottom: 20px; }
+      .date-pill { display: none; }
+      .welcome { align-items: flex-start; padding: 16px; }
+      .welcome strong { font-size: 18px; }
+      .streak { font-size: 10px; }
+      .modules { grid-template-columns: 1fr; }
+      .module-card.featured { grid-column: auto; }
+      .module-list { grid-template-columns: 1fr; }
+      .quick-entries { grid-template-columns: 1fr; }
+      .input-bar { flex-wrap: wrap; }
+      .input-bar input { flex-basis: 100%; }
+      .action-btn { flex: 1; }
+    }
+    @media (max-width: 420px) { .stats { gap: 8px; } .stat-card { padding: 12px; } .stat-value { font-size: 23px; } .stat-top { font-size: 11px; } .stat-desc { font-size: 10px; } .section-note { display: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Main navigation">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">H</div><div><div class="brand-name">English, daily</div><div class="brand-sub">Hong Nhi's learning space</div></div></div>
+      <nav class="nav-group" aria-label="Main learning">
+        <p class="nav-label">Main Learning</p>
+        <button class="nav-link active" type="button"><span class="nav-icon">⌂</span>Home</button>
+        <button class="nav-link" type="button"><span class="nav-icon">Aa</span>Vocabulary List</button>
+        <button class="nav-link" type="button"><span class="nav-icon">▤</span>Grammar Lessons</button>
+        <button class="nav-link" type="button"><span class="nav-icon">◖</span>Listening Practice</button>
+      </nav>
+      <nav class="nav-group" aria-label="Tools and utilities">
+        <p class="nav-label">Tools &amp; Utilities</p>
+        <button class="nav-link" type="button"><span class="nav-icon">▧</span>Flashcards</button>
+        <button class="nav-link" type="button"><span class="nav-icon">✓</span>Practice Tests</button>
+        <button class="nav-link" type="button"><span class="nav-icon">⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-bottom">Small steps, every day.<br>Keep building your English confidence.</div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div><div class="eyebrow">Your learning dashboard</div><h1>Good to see you, Hong Nhi.</h1></div>
+        <div class="top-right"><div class="date-pill" id="today-date">Today</div><div class="avatar" aria-label="Hong Nhi">HN</div></div>
+      </header>
+
+      <section class="welcome" aria-label="Daily greeting">
+        <div><strong>Hello! Let's practice English together today.</strong><p>A little practice today makes speaking feel easier tomorrow.</p></div>
+        <div class="streak">Daily English practice</div>
+      </section>
+
+      <section aria-labelledby="progress-title">
+        <div class="section-head"><h2 id="progress-title">Today's progress</h2><span class="section-note">Keep going — you're building a habit.</span></div>
+        <div class="stats">
+          <article class="stat-card"><div class="stat-top"><span>New Words</span><i class="stat-dot lime"></i></div><div class="stat-value">15 <small>/ 20 words</small></div><p class="stat-desc">Learned new vocabulary about daily routines today.</p><div class="progress-row"><div class="track"><div class="fill lime" style="width:75%"></div></div><span>75%</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Listening Time</span><i class="stat-dot blue"></i></div><div class="stat-value">30 <small>/ 45 mins</small></div><p class="stat-desc">Listened to short conversations and repeated them.</p><div class="progress-row"><div class="track"><div class="fill blue" style="width:67%"></div></div><span>67%</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Speaking Practice</span><i class="stat-dot peach"></i></div><div class="stat-value">20 <small>/ 30 mins</small></div><p class="stat-desc">Practiced self-introduction in front of a mirror.</p><div class="progress-row"><div class="track"><div class="fill peach" style="width:67%"></div></div><span>67%</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Quiz Score</span><i class="stat-dot"></i></div><div class="stat-value">90 <small>points</small></div><p class="stat-desc">Passed the basic grammar test with a good score.</p><div class="progress-row"><div class="track"><div class="fill" style="width:100%"></div></div><span>Target 85 ✓</span></div></article>
+        </div>
+      </section>
+
+      <section aria-labelledby="modules-title">
+        <div class="section-head"><h2 id="modules-title">Learning modules</h2><span class="section-note">Choose one small thing to practice next.</span></div>
+        <div class="modules">
+          <article class="module-card featured">
+            <div class="module-heading"><h3>Daily Conversation</h3><span class="tag">Most important</span></div>
+            <p>Learn common words and expressions to talk about everyday activities clearly.</p>
+            <ol class="module-list"><li><span class="step">1</span>Practice basic greeting sentences.</li><li><span class="step">2</span>Learn how to ask for directions.</li><li><span class="step">3</span>Describe daily tasks in simple words.</li></ol>
+          </article>
+          <article class="module-card">
+            <div class="module-heading"><h3>Grammar &amp; Sentence Patterns</h3></div>
+            <p>Master basic sentence structures to make correct English sentences easily.</p>
+            <ol class="module-list"><li><span class="step">1</span>Practice the Present Simple tense.</li><li><span class="step">2</span>Ask questions with “What”, “Where”, and “How”.</li><li><span class="step">3</span>Do short grammar exercises.</li></ol>
+          </article>
+          <article class="module-card">
+            <div class="module-heading"><h3>Pronunciation Practice</h3></div>
+            <p>Improve sound pronunciation and accent to speak more confidently.</p>
+            <ol class="module-list"><li><span class="step">1</span>Practice basic English vowel sounds.</li><li><span class="step">2</span>Repeat audio clips from native speakers.</li><li><span class="step">3</span>Record voice to check pronunciation.</li></ol>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="quick-title">
+        <div class="section-head quick-head"><h2 id="quick-title">Quick practice</h2><span class="section-note">Short sessions fit into your day.</span></div>
+        <div class="quick-entries">
+          <button class="quick-card" type="button" data-action="review"><span class="quick-symbol">Aa</span><span><b>Quick Vocab Review</b><span>Review 10 words anytime during your free time today.</span></span></button>
+          <button class="quick-card" type="button" data-action="dictionary"><span class="quick-symbol">⌕</span><span><b>Search Dictionary</b><span>Look up word meanings and listen to correct pronunciations.</span></span></button>
+          <button class="quick-card" type="button" data-action="audio"><span class="quick-symbol">▶</span><span><b>Short Audio Clips</b><span>Listen to 5-minute everyday conversations.</span></span></button>
+        </div>
+        <form class="input-bar" id="quick-form">
+          <input id="quick-input" type="text" aria-label="Enter an English word" placeholder="Type a word or choose an action…">
+          <button class="action-btn" type="button" data-action="add">＋ Add new word</button>
+          <button class="action-btn" type="button" data-action="search">⌕ Search word</button>
+          <button class="action-btn primary" type="button" data-action="listen">▶ Start listening</button>
+        </form>
+      </section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script>
+    const date = new Date();
+    document.getElementById('today-date').textContent = new Intl.DateTimeFormat('en', { weekday: 'short', month: 'short', day: 'numeric' }).format(date);
+    const toast = document.getElementById('toast');
+    let toastTimer;
+    function notify(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+    }
+    document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => {
+      document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+      link.classList.add('active');
+      if (link.textContent.trim() !== 'Home') notify(`${link.textContent.trim()} selected`);
+    }));
+    document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
+      const action = button.dataset.action;
+      const word = document.getElementById('quick-input').value.trim();
+      if ((action === 'add' || action === 'search') && !word) {
+        document.getElementById('quick-input').focus();
+        notify(action === 'add' ? 'Type a word to add to your list.' : 'Type a word to look it up.');
+        return;
+      }
+      const messages = {
+        review: 'Your 10-word review is ready to start.',
+        dictionary: word ? `Ready to look up “${word}”.` : 'Type a word in the quick input below to search.',
+        audio: 'Your 5-minute conversation clip is ready.',
+        add: `“${word}” added to your vocabulary review.`,
+        search: `Searching the dictionary for “${word}”.`,
+        listen: 'Listening practice started — repeat each line aloud.'
+      };
+      notify(messages[action] || 'Ready to practice.');
+    }));
+    document.getElementById('quick-form').addEventListener('submit', event => event.preventDefault());
+  </script>
+</body>
+</html>
